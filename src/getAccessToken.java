@@ -25,6 +25,16 @@ public class getAccessToken {
                 "&username=" + URLEncoder.encode(username, "UTF-8") +
                 "&password=" + URLEncoder.encode(password + securityToken, "UTF-8");
 
+
+        URIBuilder builder = new URIBuilder(endpoint);
+        builder.setParameter("grant_type", "password")
+                .setParameter("client_id", clientId)
+                .setParameter("client_secret", clientSecret)
+                .setParameter("username", username)
+                .setParameter("password", password + securityToken);
+        URI uri = builder.build();
+
+
         // Send a POST request to the Salesforce OAuth 2.0 endpoint to obtain an access token
         URL url = new URL(oauthUrl);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
