@@ -1,0 +1,32 @@
+import org.apache.http.HttpHost;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.util.EntityUtils;
+
+public class PostApiWithProxyExample {
+    public static void main(String[] args) throws Exception {
+        String url = "http://example.com/api";
+
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+        HttpPost httpPost = new HttpPost(url);
+
+        StringEntity params = new StringEntity("param1=value1&param2=value2");
+        httpPost.setEntity(params);
+
+        HttpHost proxy = new HttpHost("proxy.example.com", 8080);
+        RequestConfig config = RequestConfig.custom()
+          .setProxy(proxy)
+          .build();
+        httpPost.setConfig(config);
+
+        CloseableHttpResponse response = httpClient.execute(httpPost);
+        String responseString = EntityUtils.toString(response.getEntity());
+        System.out.println(responseString);
+
+        httpClient.close();
+    }
+}
