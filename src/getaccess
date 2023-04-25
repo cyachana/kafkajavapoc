@@ -1,19 +1,28 @@
+import java.net.ProxySelector;
 import org.apache.http.HttpHost;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.conn.SystemDefaultRoutePlanner;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.protocol.BasicHttpContext;
+import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
 
-public class PostApiWithProxyExample {
+public class PostApiWithSystemProxyExample {
     public static void main(String[] args) throws Exception {
         String url = "http://example.com/api";
 
         HttpClientBuilder clientBuilder = HttpClients.custom();
         clientBuilder.setRoutePlanner(new SystemDefaultRoutePlanner(ProxySelector.getDefault()));
         CloseableHttpClient httpClient = clientBuilder.build();
+
+        // Get the proxy settings from the HttpClientContext
+        HttpContext context = new BasicHttpContext();
+        HttpHost proxy = (HttpHost) context.getAttribute("http.route.default-proxy");
+        System.out.println("Proxy settings: " + proxy);
 
         HttpPost httpPost = new HttpPost(url);
         StringEntity params = new StringEntity("param1=value1&param2=value2");
