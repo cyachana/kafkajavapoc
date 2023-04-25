@@ -11,17 +11,13 @@ public class PostApiWithProxyExample {
     public static void main(String[] args) throws Exception {
         String url = "http://example.com/api";
 
-        CloseableHttpClient httpClient = HttpClients.createDefault();
-        HttpPost httpPost = new HttpPost(url);
+        HttpClientBuilder clientBuilder = HttpClients.custom();
+        clientBuilder.setRoutePlanner(new SystemDefaultRoutePlanner(ProxySelector.getDefault()));
+        CloseableHttpClient httpClient = clientBuilder.build();
 
+        HttpPost httpPost = new HttpPost(url);
         StringEntity params = new StringEntity("param1=value1&param2=value2");
         httpPost.setEntity(params);
-
-        HttpHost proxy = new HttpHost("proxy.example.com", 8080);
-        RequestConfig config = RequestConfig.custom()
-          .setProxy(proxy)
-          .build();
-        httpPost.setConfig(config);
 
         CloseableHttpResponse response = httpClient.execute(httpPost);
         String responseString = EntityUtils.toString(response.getEntity());
